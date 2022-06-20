@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { Router, useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 
 const NewTweet = () => {
   const [content, setContent] = useState('');
