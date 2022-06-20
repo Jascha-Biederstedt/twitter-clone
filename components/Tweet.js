@@ -5,7 +5,8 @@ import timeago from 'lib/timeago';
 const Tweet = ({ tweet }) => {
   return (
     <p>
-      {timeago.format(new Date(tweet.createdAt))} {tweet.content}
+      {timeago.format(new Date(tweet.createdAt))} {tweet.author.name}{' '}
+      {tweet.content}
     </p>
   );
 };
