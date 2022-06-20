@@ -1,7 +1,13 @@
 import React from 'react';
 
+import timeago from 'lib/timeago';
+
 const Tweet = ({ tweet }) => {
-  return <div>{tweet.content}</div>;
+  return (
+    <p>
+      {timeago.format(new Date(tweet.createdAt))} {tweet.content}
+    </p>
+  );
 };
 
 export default Tweet;
