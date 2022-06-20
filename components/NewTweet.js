@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
+import { Router, useRouter } from 'next/router';
 
 const NewTweet = () => {
   const [content, setContent] = useState('');
   const { data: session } = useSession();
+  const router = useRouter();
 
   if (!session || !session.user) return null;
 
@@ -20,6 +22,8 @@ const NewTweet = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ content }),
     });
+
+    router.reload(window.location.pathname);
   };
 
   return (
