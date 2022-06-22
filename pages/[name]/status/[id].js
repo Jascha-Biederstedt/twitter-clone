@@ -3,23 +3,33 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 
 import prisma from 'lib/prisma';
-import { getTweet } from 'lib/data';
+import { getTweet, getReplies } from 'lib/data';
 import Tweet from 'components/Tweet';
+import Tweets from 'components/Tweets';
+import NewReply from 'components/NewReply';
 
 export const getServerSideProps = async ({ params: { id } }) => {
   let tweet = await getTweet(id, prisma);
   tweet = JSON.parse(JSON.stringify(tweet));
 
+  let replies = await getReplies(id, prisma);
+  replies = JSON.parse(JSON.stringify(replies));
+
   return {
     props: {
       tweet,
+      replies,
     },
   };
 };
 
-const SingleTweet = ({ tweet }) => {
+const SingleTweet = ({ tweet, replies }) => {
   const { data: session } = useSession();
   const router = useRouter();
+
+  if (typeof window !== 'undefined' && tweet.parent) {
+    router.push(`/${tweet.parent_data.author.name}/status/${tweet.parent}`);
+  }
 
   const handleDeleteClick = async () => {
     const res = await fetch('/api/tweet', {
@@ -55,6 +65,10 @@ const SingleTweet = ({ tweet }) => {
           </a>
         </div>
       )}
+
+      <NewReply tweet={tweet} />
+
+      <Tweets tweets={replies} noLink={true} />
     </>
   );
 };
