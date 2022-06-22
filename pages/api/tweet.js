@@ -20,7 +20,7 @@ const handler = async (req, res) => {
   if (!user) return res.status(401).json({ message: 'User not found.' });
 
   if (req.method === 'POST') {
-    await prisma.tweet.create({
+    const tweet = await prisma.tweet.create({
       data: {
         content: req.body.content,
         parent: req.body.parent || null,
@@ -30,7 +30,16 @@ const handler = async (req, res) => {
       },
     });
 
-    return res.end();
+    const tweetWithAuthorData = await prisma.tweet.findUnique({
+      where: {
+        id: tweet.id,
+      },
+      include: {
+        author: true,
+      },
+    });
+
+    return res.json(tweetWithAuthorData);
   }
 
   if (req.method === 'DELETE') {

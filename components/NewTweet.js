@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 
-const NewTweet = () => {
+const NewTweet = ({ tweets, setTweets }) => {
   const [content, setContent] = useState('');
   const { data: session } = useSession();
   const router = useRouter();
@@ -17,13 +17,18 @@ const NewTweet = () => {
       return;
     }
 
-    await fetch('/api/tweet', {
+    const res = await fetch('/api/tweet', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ content }),
     });
 
-    router.reload(window.location.pathname);
+    const tweet = await res.json();
+
+    setTweets([tweet, ...tweets]);
+    setContent('');
+
+    // router.reload(window.location.pathname);
   };
 
   return (
@@ -36,6 +41,7 @@ const NewTweet = () => {
             cols={50}
             placeholder="What's happening?"
             name='content'
+            value={content}
             onChange={event => setContent(event.target.value)}
           />
         </div>
